@@ -1,4 +1,6 @@
-import { useRef } from 'react'
+import { useState } from 'react'
+import { useRef, useState } from 'react'
+import axios from 'axios'
 import './signup.css'
 
 const baseUrl = 'http://localhost:5001'
@@ -11,12 +13,21 @@ const Signup = () => {
     const passwordInputRef = useRef(null)
     const repeatPasswordInputRef = useRef(null)
 
+    const [passwordErrorMsg, setPasswordErrorMsg] = useState("")
+
 
     const signupSubmitHandler = (e) =>{
         e.preventDefault()
 
+        if(passwordInputRef.current.value !== repeatPasswordInputRef.current.value){
+            return
+        }
+
         axios.post(`${baseUrl}/signup`, {
-            
+            firstName: firstNameInputRef.current.value,
+            lastName: lastNameInputRef.current.value,
+            email: emailInputRef.current.value,
+            password: passwordInputRef.current.value,
         })
     }
 
@@ -45,6 +56,7 @@ const Signup = () => {
 
           <label for="repeatPasswordInput">Repeat Password:</label>
           <input ref={repeatPasswordInputRef} type="password" name="repeatPasswordInput" id="repeatPasswordInput" />
+          <p className={`passwordErrorMsg ` } id='passwordErrorMsg'>Password do not match.</p>
   
           <br />
 
