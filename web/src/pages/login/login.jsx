@@ -5,11 +5,11 @@ const Login = () => {
     <div>
       <h1>Login</h1>
       <form id="loginForm">
-        <label for="emailInput">email:</label>
+        <label htmlFor="emailInput">email:</label>
         <input type="email" name="emailInput" id="emailInput" required />
 
         <br />
-        <label for="passwordInput">password:</label>
+        <label htmlFor="passwordInput">password:</label>
         <input type="text" name="passwordInput" id="passwordInput" />
 
         <br />

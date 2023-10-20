@@ -79,7 +79,7 @@ const Home = () => {
       const response = await axios.delete(`${baseUrl}/api/v1/mongoDB/post/${_id}`,{
         title: postTitleInputRef.current.value,
         text: postBodyInputRef.current.value,
-      });
+        });
 
     // console.log(response.data);
     // setWeatherData([response.data, ...weatherData]);
@@ -207,13 +207,13 @@ const Home = () => {
               <span>
                 {editAlert && editAlert}
                 {isLoading && "Loading..."}
-              </span>
+                </span>
           </form>) : (<div>
             <h2>{post.title}</h2>
             <p>{post.text}</p>
             <button onClick={()=>{
               allPosts[index].isEdit = true
-              setAllPosts([...allPosts])
+                setAllPosts([...allPosts])
             }}>Edit</button>
             <button onClick={()=>{delPostHandler(post._id)}}>Delete</button>
             </div>)}
