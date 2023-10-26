@@ -1,5 +1,5 @@
 // import { useState } from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import axios from 'axios'
 import './signup.css'
 
@@ -15,6 +15,14 @@ const Signup = () => {
 
     const [passwordErrorClass, setPasswordErrorClass] = useState("hidden")
     const [alertMessage , setAlertMessage] = useState('')
+    const [errorMessage , setErrorMessage] = useState('')
+
+    useEffect(()=>{
+        setTimeout(() => {
+            setAlertMessage('')
+            setErrorMessage('')
+        }, 5000);
+    },[alertMessage,errorMessage])
 
 
     const signupSubmitHandler = async (e) =>{
@@ -38,7 +46,7 @@ const Signup = () => {
             setAlertMessage(response.data.message)
         }catch (error){
             console.log(error.response.data);
-            setAlertMessage(error.response.data.message)
+            setErrorMessage(error.response.data.message)
         }}
 
 
@@ -66,12 +74,14 @@ const Signup = () => {
 
           <label htmlFor="repeatPasswordInput">Repeat Password:</label>
           <input ref={repeatPasswordInputRef} type="password" name="repeatPasswordInput" id="repeatPasswordInput" />
-          <p className={`passwordErrorMsg ${passwordErrorClass}` } id='passwordErrorMsg'>Password do not match.</p>
+          <p className={`errorMsg ${passwordErrorClass}` } id='passwordErrorMsg'>Password do not match.</p>
   
           <br />
 
   
           <button type="submit">Sign Up</button>
+          <div className='alertMsg'>{alertMessage}</div>
+          <div className='errorMsg'>{errorMessage}</div>
         </form>
       </div>
     )
