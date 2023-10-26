@@ -31,7 +31,7 @@ const Home = () => {
       }
     }
 
-  useEffect(() => {
+    useEffect(() => {
     // setIsLoading(true)
     // const controller = new AbortController();
     // if (navigator.geolocation) {

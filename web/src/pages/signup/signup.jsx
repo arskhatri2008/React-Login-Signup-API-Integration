@@ -55,25 +55,25 @@ const Signup = () => {
         <h1>Sign Up</h1>
         <form id="signupForm" onSubmit={signupSubmitHandler}>
           <label htmlFor="firstNameInput">First Name:</label>
-          <input ref={firstNameInputRef} type="text" name="firstNameInput" id="firstNameInput" required />
+          <input ref={firstNameInputRef} type="text" autoComplete='given-name' name="firstNameInput" id="firstNameInput" required />
   
           <br />
           <label htmlFor="lastNameInput">Last Name:</label>
-          <input ref={lastNameInputRef} type="text" name="lastNameInput" id="lastNameInput" required />
+          <input ref={lastNameInputRef} type="text" autoComplete='family-name' name="lastNameInput" id="lastNameInput" required />
   
           <br />
           <label htmlFor="emailInput">Email:</label>
-          <input ref={emailInputRef} type="email" name="emailInput" id="emailInput" required />
+          <input ref={emailInputRef} type="email" autoComplete='email' name="emailInput" id="emailInput" required />
   
           <br />
 
           <label htmlFor="passwordInput">Password:</label>
-          <input ref={passwordInputRef} type="password" name="passwordInput" id="passwordInput" />
+          <input ref={passwordInputRef} type="password" autoComplete='new-password' name="passwordInput" id="passwordInput" />
   
           <br />
 
           <label htmlFor="repeatPasswordInput">Repeat Password:</label>
-          <input ref={repeatPasswordInputRef} type="password" name="repeatPasswordInput" id="repeatPasswordInput" />
+          <input ref={repeatPasswordInputRef} type="password" autoComplete='new-password' name="repeatPasswordInput" id="repeatPasswordInput" />
           <p className={`errorMsg ${passwordErrorClass}` } id='passwordErrorMsg'>Password do not match.</p>
   
           <br />

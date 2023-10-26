@@ -1,6 +1,5 @@
 
 import express from 'express';
-let router = express.Router()
 import { client } from './../mongodb.mjs'
 import jwt from 'jsonwebtoken';
 import {
@@ -8,6 +7,7 @@ import {
     varifyHash
 } from "bcrypt-inzi";
 
+let router = express.Router()
 
 const userCollection = client.db("cruddb").collection("users");
 
