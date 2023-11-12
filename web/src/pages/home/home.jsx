@@ -19,7 +19,7 @@ const Home = () => {
       try {
         setIsLoading(true)
           // let apiKey = "1eb2b0718446fe54a6718bc2ed5f4a03"
-          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/posts`);
+          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/posts`,{withCredentials: true});
 
         console.log(response.data);
         // setWeatherData([response.data, ...weatherData]);

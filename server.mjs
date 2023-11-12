@@ -26,6 +26,7 @@ app.use((req, res, next) => { // JWT
     console.log("cookies: ", req.cookies);
 
     const token = req.cookies.token;
+    console.log("Received token: ", token);
     try {
         const decoded = Jwt.verify(token, process.env.SECRET);
         console.log("decoded: ", decoded);
@@ -40,6 +41,7 @@ app.use((req, res, next) => { // JWT
         next();
 
     } catch (err) {
+        console.log('Token verification error: ', err)
         res.status(401).send({ message: "invalid token" })
     }
 
