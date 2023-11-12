@@ -1,4 +1,5 @@
 import express from 'express'
+import  Jwt  from 'jsonwebtoken'
 import path from 'path'
 import authRouter from './routes/auth.mjs'
 import postRouter from './routes/posts.mjs'
@@ -16,16 +17,17 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-app.use(express.static(path.join(__dirname,'public')))
 
 app.use('/api/v1/mongoDB', authRouter)
+
+app.use(express.static(path.join(__dirname,'public')))
 
 app.use((req, res, next) => { // JWT
     console.log("cookies: ", req.cookies);
 
     const token = req.cookies.token;
     try {
-        const decoded = jwt.verify(token, process.env.SECRET);
+        const decoded = Jwt.verify(token, process.env.SECRET);
         console.log("decoded: ", decoded);
 
         req.body.decoded = {
