@@ -23,11 +23,11 @@ const Login = () => {
         },{
           withCredentials: true
         })
-        console.log(response.data.message);
-        setAlertMessage(response.data.message)
+        console.log(response?.data?.message);
+        setAlertMessage(response?.data?.message)
     }catch (error){
-        console.log(error.response.data);
-        setErrorMessage(error.response.data.message)
+        console.log(error.response?.data);
+        setErrorMessage(error.response?.data?.message)
     }}
 
   return (
@@ -35,11 +35,11 @@ const Login = () => {
       <h1>Login</h1>
       <form id="loginForm" onSubmit={loginSubmitHandler}>
         <label htmlFor="emailInput">email:</label>
-        <input type="email" autoComplete="email" name="emailInput" id="emailInput" required />
+        <input type="email" autoComplete="email" name="emailInput" id="emailInput" ref={emailInputRef} required />
 
         <br />
         <label htmlFor="passwordInput">password:</label>
-        <input type="password" autoComplete="current-password" name="passwordInput" id="passwordInput" />
+        <input type="password" autoComplete="current-password" name="passwordInput" id="passwordInput" ref={passwordInputRef} />
 
         <br />
 
