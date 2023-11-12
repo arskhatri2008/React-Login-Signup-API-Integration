@@ -1,11 +1,14 @@
 // import { useState } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useContext } from 'react'
 import axios from 'axios'
 import './signup.css'
+import {GlobalContext} from '../../context/context'
 
 const baseUrl = 'http://localhost:5001'
 
 const Signup = () => {
+
+    const {state, dispatch} = useContext(GlobalContext)
 
     const firstNameInputRef = useRef(null)
     const lastNameInputRef = useRef(null)
@@ -53,6 +56,7 @@ const Signup = () => {
     return (
         <div>
         <h1>Sign Up</h1>
+        <h2>{state.name}</h2>
         <form id="signupForm" onSubmit={signupSubmitHandler}>
           <label htmlFor="firstNameInput">First Name:</label>
           <input ref={firstNameInputRef} type="text" autoComplete='given-name' name="firstNameInput" id="firstNameInput" required />

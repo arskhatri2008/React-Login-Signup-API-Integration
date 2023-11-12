@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useContext } from 'react'
 import axios from 'axios'
 import "./login.css";
+import { GlobalContext } from '../../context/context';
 
 const baseUrl = 'http://localhost:5001'
 
 const Login = () => {
+
+  let { state, dispatch } = useContext(GlobalContext);
   
   const emailInputRef = useRef(null)
   const passwordInputRef = useRef(null)
@@ -36,9 +39,17 @@ const Login = () => {
         setErrorMessage(error.response?.data?.message)
     }}
 
+  const ChangNameHandler = () => {
+      dispatch({
+        type: "CHANGE_NAME",
+        payload: 'Khatri'
+      })
+    }
+
   return (
     <div>
       <h1>Login</h1>
+      <h2>{state.name} <button onClick={ChangNameHandler}>Change Name</button></h2>
       <form id="loginForm" onSubmit={loginSubmitHandler}>
         <label htmlFor="emailInput">email:</label>
         <input type="email" autoComplete="email" name="emailInput" id="emailInput" ref={emailInputRef} required />

@@ -3,6 +3,7 @@ import { reducer } from './reducer';
 export const GlobalContext = createContext("Initial Value");
 let data = {
   user: {},
+  name: 'some random name',
   darkTheme: true
 }
 export default function ContextProvider({ children }) {
