@@ -50,7 +50,9 @@ app.use((req, res, next) => { // JWT
 
 app.use('/api/v1/mongoDB', postRouter)
 
-
+app.use('/api/v1/mongoDB/ping', (req, res)=>{
+    res.send('OK')
+})
 
 const PORT = process.env.PORT || 5001
 app.listen(PORT,()=>{

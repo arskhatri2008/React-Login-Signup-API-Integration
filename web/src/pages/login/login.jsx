@@ -12,6 +12,12 @@ const Login = () => {
   const [alertMessage , setAlertMessage] = useState('')
   const [errorMessage , setErrorMessage] = useState('')
 
+  useEffect(()=>{
+      setTimeout(() => {
+          setAlertMessage('')
+          setErrorMessage('')
+      }, 5000);
+  },[alertMessage,errorMessage])
 
   const loginSubmitHandler = async (e) =>{
     e.preventDefault()
