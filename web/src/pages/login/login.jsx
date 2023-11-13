@@ -32,6 +32,11 @@ const Login = () => {
         },{
           withCredentials: true
         })
+        dispatch({
+          type: "USER_LOGIN",
+          // payload: 'Khatri'
+        })
+
         console.log(response?.data?.message);
         setAlertMessage(response?.data?.message)
     }catch (error){
@@ -39,17 +44,17 @@ const Login = () => {
         setErrorMessage(error.response?.data?.message)
     }}
 
-  const ChangNameHandler = () => {
-      dispatch({
-        type: "CHANGE_NAME",
-        payload: 'Khatri'
-      })
-    }
+  // const ChangNameHandler = () => {
+  //     dispatch({
+  //       type: "CHANGE_NAME",
+  //       payload: 'Khatri'
+  //     })
+  //   }
 
   return (
     <div>
       <h1>Login</h1>
-      <h2>{state.name} <button onClick={ChangNameHandler}>Change Name</button></h2>
+      {/* <h2>{state.name} <button onClick={ChangNameHandler}>Change Name</button></h2> */}
       <form id="loginForm" onSubmit={loginSubmitHandler}>
         <label htmlFor="emailInput">email:</label>
         <input type="email" autoComplete="email" name="emailInput" id="emailInput" ref={emailInputRef} required />

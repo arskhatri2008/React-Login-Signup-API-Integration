@@ -3,6 +3,7 @@ import { reducer } from './reducer';
 export const GlobalContext = createContext("Initial Value");
 let data = {
   user: {},
+  isLogin: null,
   name: 'some random name',
   darkTheme: true
 }
