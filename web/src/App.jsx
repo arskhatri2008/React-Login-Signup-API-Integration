@@ -41,13 +41,15 @@ const App = () => {
 
   return (
     <div>
-      {state.isLogin === true ? (
+      {/* admin routes */}
+      {state.isLogin === true && state.role === 'admin' ? (
         <>
         <nav>
           <ul>
-            <li><Link to={"/"}>Home</Link></li>
-            <li><Link to={"/chat"}>Chat</Link></li>
-            <li><Link to={"/about"}>About</Link></li>
+            <li><Link to={"/"}>Admin Home</Link></li>
+            <li><Link to={"/chat"}>Admin Chat</Link></li>
+            <li><Link to={"/about"}>Admin About</Link></li>
+            {state.user.email}
             {/* <li><Link to={'/login'}>Login</Link></li>
                 <li><Link to={'/signup'}>Sign Up</Link></li> */}
           </ul>
@@ -64,6 +66,32 @@ const App = () => {
       </>
       ) : null}
 
+      {/* user routes */}
+      {state.isLogin === true && state.role === 'user' ? (
+        <>
+        <nav>
+          <ul>
+            <li><Link to={"/"}>Home</Link></li>
+            <li><Link to={"/chat"}>Chat</Link></li>
+            <li><Link to={"/about"}>About</Link></li>
+            {state.user.email}
+            {/* <li><Link to={'/login'}>Login</Link></li>
+                <li><Link to={'/signup'}>Sign Up</Link></li> */}
+          </ul>
+        </nav>
+
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="chat" element={<Chat />} />
+            {/* <Route path='login' element={<Login />} />
+            <Route path='signup' element={<Signup />} /> */}
+            <Route path="*" element={<Navigate to="/" replace={true} />} />
+        </Routes>
+      </>
+      ) : null}
+
+      {/* unAuth routes */}
       {state.isLogin === false ? (
         <>
         <nav>
@@ -87,6 +115,7 @@ const App = () => {
         </>
       ) : null}
 
+      {/* splash screen */}
       {state.isLogin === null ? (
         <div>
           <img
