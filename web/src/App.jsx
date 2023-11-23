@@ -20,11 +20,12 @@ const App = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await axios.get(`${baseUrl}/api/v1/mongoDB/ping`, {
+        const response = await axios.get(`${baseUrl}/api/v1/mongoDB/profile`, {
           withCredentials: true,
         });
         dispatch({
           type: "USER_LOGIN",
+          payload: response.data.data,
         });
         // setIsLogin(true)
       } catch (error) {

@@ -45,6 +45,7 @@ import OpenAI from 'openai';
 
 const db = client.db("cruddb");
 const col = db.collection("posts");
+const userCollection = db.collection("users");
 
 let router = express.Router()
 
@@ -143,6 +144,28 @@ router.post('/post', async (req, res, next) => {
       console.log(error);
       res.send({message:'Error occurred.'})  
     }})
+
+// Get Profile
+router.get('/profile', async (req, res, next) => {
+    // console.log('this is signup!', new Date());
+    try {
+        let result = await userCollection.findOne({ email: req.body.decoded.email });
+        console.log("result: ", result);
+        res.send({
+            message: 'profile fetched',
+            data: {
+                isAdmin: result.isAdmin,
+                firstName: result.firstName,
+                lastName: result.lastName,
+                email: result.email,
+            }
+        })
+    }
+    catch (error) {
+      console.log(error);
+      res.send({message:'Server error occurred.'})  
+    }})
+
 
 
 // GET All Posts     /api/v1/posts

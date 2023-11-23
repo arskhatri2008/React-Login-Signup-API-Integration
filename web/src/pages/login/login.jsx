@@ -35,6 +35,7 @@ const Login = () => {
         dispatch({
           type: "USER_LOGIN",
           // payload: 'Khatri'
+          payload: response.data.data
         })
 
         console.log(response?.data?.message);
@@ -54,6 +55,8 @@ const Login = () => {
   return (
     <div>
       <h1>Login</h1>
+      <div>{JSON.stringify(state)}</div>
+
       {/* <h2>{state.name} <button onClick={ChangNameHandler}>Change Name</button></h2> */}
       <form id="loginForm" onSubmit={loginSubmitHandler}>
         <label htmlFor="emailInput">email:</label>
