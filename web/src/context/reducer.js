@@ -15,7 +15,7 @@ export const reducer = (state, action) => {
         }
       }
       case "USER_LOGOUT": {
-        return { ...state, isLogin: false } 
+        return { ...state, isLogin: false, role: null, user: {} } 
       }
       case "CHANGE_THEME": {
         return { ...state, darkTheme: !state.darkTheme }

@@ -39,6 +39,19 @@ const App = () => {
     checkLoginStatus();
   }, []);
 
+  const logoutHandler = async () => {
+    try {
+      await axios.post(`${baseUrl}/api/v1/mongoDB/logout`,{}, {
+        withCredentials: true,
+      });
+      dispatch({
+        type: "USER_LOGOUT",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       {/* admin routes */}
@@ -50,6 +63,7 @@ const App = () => {
             <li><Link to={"/chat"}>Admin Chat</Link></li>
             <li><Link to={"/about"}>Admin About</Link></li>
             {state.user.email}
+            <button onClick={logoutHandler}>Logout</button>
             {/* <li><Link to={'/login'}>Login</Link></li>
                 <li><Link to={'/signup'}>Sign Up</Link></li> */}
           </ul>
@@ -75,6 +89,7 @@ const App = () => {
             <li><Link to={"/chat"}>Chat</Link></li>
             <li><Link to={"/about"}>About</Link></li>
             {state.user.email}
+            <button onClick={logoutHandler}>Logout</button>
             {/* <li><Link to={'/login'}>Login</Link></li>
                 <li><Link to={'/signup'}>Sign Up</Link></li> */}
           </ul>

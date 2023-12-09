@@ -82,6 +82,18 @@ router.post('/login', async (req, res, next) => {
         res.status(500).send('server error, please try later');
     }
 })
+
+router.post('/logout', async (req, res, next) => {
+    res.clearCookie('token');
+    // res.cookie('token', '', {
+    //     httpOnly: true,
+    //     secure: true,
+    //     expires: new Date(Date.now()+86400000)
+    // })
+    res.send({
+        message: "logout successful"
+    });
+})
 router.post('/signup', async (req, res, next) => {
 
     if (
