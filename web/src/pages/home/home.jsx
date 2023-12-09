@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import "./home.css";
+import { baseUrl } from "../../core";
 // import WeatherCard from "../weatherWidget/weatherWidget";
-const baseUrl = "http://localhost:5001";
+// const baseUrl = "http://localhost:5001";
 
 const Home = () => {
   const [alert, setAlert] = useState([]);

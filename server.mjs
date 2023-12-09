@@ -20,11 +20,9 @@ app.use(cookieParser())
 
 app.use('/api/v1/mongoDB', authRouter)
 
-app.use(express.static(path.join(__dirname,'public')))
-
-app.use((req, res, next) => { // JWT
+app.use('/api/v1/mongoDB', (req, res, next) => { // JWT
     console.log("cookies: ", req.cookies);
-
+    
     const token = req.cookies.token;
     console.log("Received token: ", token);
     try {
@@ -52,6 +50,12 @@ app.use('/api/v1/mongoDB', postRouter)
 
 app.use('/api/v1/mongoDB/ping', (req, res)=>{
     res.send('OK')
+})
+
+app.use('/', express.static(path.join(__dirname,'web/build')))
+app.get('*', (req, res)=>{
+    res.sendFile(path.join(__dirname,'/web/build/index.html'))
+    // res.redirect('/')
 })
 
 const PORT = process.env.PORT || 5001

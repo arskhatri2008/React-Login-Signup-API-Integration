@@ -3,8 +3,9 @@ import { useEffect, useRef, useState, useContext } from 'react'
 import axios from 'axios'
 import './signup.css'
 import {GlobalContext} from '../../context/context'
+import { baseUrl } from '../../core'
 
-const baseUrl = 'http://localhost:5001'
+// const baseUrl = 'http://localhost:5001'
 
 const Signup = () => {
 

@@ -10,8 +10,9 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { GlobalContext } from "./context/context";
 import splashScreen from "./assets/splash.gif";
+import { baseUrl } from "./core";
 
-const baseUrl = "http://localhost:5001";
+// const baseUrl = "http://localhost:5001";
 
 const App = () => {
   const { state, dispatch } = useContext(GlobalContext);
