@@ -46,7 +46,7 @@ app.use('/api/v1/mongoDB', (req, res, next) => { // JWT
 
 })
 
-app.use('/api/v1/mongoDB', postRouter)
+app.use('/api/v1/mongoDB', postRouter) // secure api
 
 app.use('/api/v1/mongoDB/ping', (req, res)=>{
     res.send('OK')
