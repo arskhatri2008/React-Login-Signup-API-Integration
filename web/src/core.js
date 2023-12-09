@@ -1,2 +1,2 @@
-const isLocalhost = window.location.href.includes('localhost')
-export const baseUrl = isLocalhost ? 'http://localhost"5001' : ""
+const isProduction = window.location.href.includes('https')
+export const baseUrl = isProduction ? '' : 'http://localhost"5001'
