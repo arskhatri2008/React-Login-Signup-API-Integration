@@ -133,6 +133,9 @@ router.post('/post', async (req, res, next) => {
             // id: nanoid(),
             title: req.body.title,
             text: req.body.text,
+            author: req.body.decoded.firstName + ' ' + req.body.decoded.lastName,
+            authorEmail: req.body.decoded.email,
+            authorId: req.body.decoded._id,
             date: new Date()
         
         });
@@ -145,11 +148,25 @@ router.post('/post', async (req, res, next) => {
       res.send({message:'Error occurred.'})  
     }})
 
+// Feed
+router.get('/feed', async (req, res, next) => {
+    //TODO
+    res.send();
+})
+
 // Get Profile
-router.get('/profile', async (req, res, next) => {
+const getProfileMiddleware = async (req, res, next) => {
     // console.log('this is signup!', new Date());
+
+    const userId = req.params.userId || req.body.decoded._id;
+
+    if(!ObjectId.isValid(userId)){
+        res.status(403).send({message: `profile id must be a valid id`})
+        return
+    }
+
     try {
-        let result = await userCollection.findOne({ email: req.body.decoded.email });
+        let result = await userCollection.findOne({ _id: userId });
         console.log("result: ", result);
         res.send({
             message: 'profile fetched',
@@ -164,20 +181,30 @@ router.get('/profile', async (req, res, next) => {
     catch (error) {
       console.log(error);
       res.send({message:'Server error occurred.'})  
-    }})
-
-
+    }}
+router.get('/profile', getProfileMiddleware)
+router.get('/profile/:userId', getProfileMiddleware)
 
 // GET All Posts     /api/v1/posts
-router.get('/posts', async (req, res, next) => {    
+router.get('/posts', async (req, res, next) => {
 
-    const cursor = col.find({}).sort({_id:-1});
-    let results = await cursor.toArray()
-    console.log("results: ", results);
-    res.send(results);
+    const userId = req.query._id || req.body.decoded._id;
+
+    if(!ObjectId.isValid(userId)){
+        res.status(403).send({message: `Invalid user id`})
+        return
+    }
+
+    const cursor = col.find({_id: userId}).sort({_id:-1}).limit(100);
+    try{
+        let results = await cursor.toArray()
+        console.log("results: ", results);
+        res.send(results);
+    }catch(e){
+        console.log('error getting data mongodb ', e)
+        res.status(500).send('server error, please try later')
+    }
 })
-
-
 
 // GET Single Post
 // router.get('/post/:postId', (req, res, next) => {
@@ -206,7 +233,12 @@ router.get('/posts', async (req, res, next) => {
 // PUT Single Post
 router.put('/post/:postId', async (req, res, next) => {
 
-    if (!req.params.postId || !req.body.text || !req.body.title) {
+    if(!ObjectId.isValid(req.params.postId)){
+        res.status(403).send({message: `post id must be a valid id`})
+        return
+    }
+
+    if (!req.body.text || !req.body.title) {
         res.status(403).send(`example put body: 
         PUT     /api/v1/post/:postId
         {

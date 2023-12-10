@@ -34,6 +34,7 @@ app.use('/api/v1/mongoDB', (req, res, next) => { // JWT
             lastName: decoded.lastName,
             email: decoded.email,
             isAdmin: decoded.isAdmin,
+            _id: decoded._id,
         };
 
         next();
