@@ -26,7 +26,6 @@
 //         res.send('post created.')
 //     })
 
-
 //     router.get('/posts', (req, res, next) => {
 //         const posts = db.collection('posts').find({}).toArray();
 //         res.send(posts)
@@ -34,24 +33,21 @@
 
 //     export default router
 
-
-
-
-import express from 'express';
-import { nanoid } from 'nanoid'
-import { client } from './../mongodb.mjs'
-import {ObjectId} from 'mongodb'
-import OpenAI from 'openai';
+import express from "express";
+import { nanoid } from "nanoid";
+import { client } from "./../mongodb.mjs";
+import { ObjectId } from "mongodb";
+import OpenAI from "openai";
 
 const db = client.db("cruddb");
 const col = db.collection("posts");
 const userCollection = db.collection("users");
 
-let router = express.Router()
+let router = express.Router();
 
 const openaiClient = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-})
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // console.log("API Key: ",apiKey);
 // not recommended at all - server should be stateless
@@ -63,148 +59,158 @@ const openaiClient = new OpenAI({
 //     }
 // ]
 
-
 // https://baseurl.com/search?q=car
-router.get('/search', async (req, res, next) => {
+router.get("/search", async (req, res, next) => {
+  try {
+    const response = await openaiClient.embeddings.create({
+      model: "text-embedding-ada-002",
+      input: req.query.q,
+    });
+    const vector = response?.data[0]?.embedding;
+    console.log("vector: ", vector);
+    // [ 0.0023063174, -0.009358601, 0.01578391, ... , 0.01678391, ]
 
-    try {
-        const response = await openaiClient.embeddings.create({
-            model: "text-embedding-ada-002",
-            input: req.query.q,
-        });
-        const vector = response?.data[0]?.embedding
-        console.log("vector: ", vector);
-        // [ 0.0023063174, -0.009358601, 0.01578391, ... , 0.01678391, ]
-
-        // Query for similar documents.
-        const documents = await col.aggregate([
-            {
-                "$search": {
-                    "index": "vectorIndex",
-                    "knnBeta": {
-                        "vector": vector,
-                        "path": "embedding",
-                        "k": 10 // number of documents
-                    },
-                    "scoreDetails": true
-
-                }
+    // Query for similar documents.
+    const documents = await col
+      .aggregate([
+        {
+          $search: {
+            index: "vectorIndex",
+            knnBeta: {
+              vector: vector,
+              path: "embedding",
+              k: 10, // number of documents
             },
-            {
-                "$project": {
-                    "embedding": 0,
-                    "score": { "$meta": "searchScore" },
-                    "scoreDetails": { "$meta": "searchScoreDetails" }
-                }
-            }
-        ]).toArray();
+            scoreDetails: true,
+          },
+        },
+        {
+          $project: {
+            embedding: 0,
+            score: { $meta: "searchScore" },
+            scoreDetails: { $meta: "searchScoreDetails" },
+          },
+        },
+      ])
+      .toArray();
 
-        documents.map(eachMatch => {
-            console.log(`score ${eachMatch?.score?.toFixed(3)} => ${JSON.stringify(eachMatch)}\n\n`);
-        })
-        console.log(`${documents.length} records found `);
+    documents.map((eachMatch) => {
+      console.log(
+        `score ${eachMatch?.score?.toFixed(3)} => ${JSON.stringify(
+          eachMatch
+        )}\n\n`
+      );
+    });
+    console.log(`${documents.length} records found `);
 
-        res.send(documents);
-
-    } catch (e) {
-        console.log("error getting data mongodb: ", e);
-        res.status(500).send('server error, please try later');
-    }
-
-})
+    res.send(documents);
+  } catch (e) {
+    console.log("error getting data mongodb: ", e);
+    res.status(500).send("server error, please try later");
+  }
+});
 
 // POST    /api/v1/post
-router.post('/post', async (req, res, next) => {
-    // console.log('this is signup!', new Date());
-    try {
-        if (
-            !req.body.title || !req.body.text
-        ) {
-            res.status(403);
-            res.send(`required parameters missing, 
+router.post("/post", async (req, res, next) => {
+  // console.log('this is signup!', new Date());
+  try {
+    if (!req.body.title || !req.body.text) {
+      res.status(403);
+      res.send(`required parameters missing, 
             example request body:
             {
                 title: "abc post title",
                 text: "some post text"
             } `);
-            return;
-        }
-        const insertResponse = await col.insertOne({
-            // id: nanoid(),
-            title: req.body.title,
-            text: req.body.text,
-            author: req.body.decoded.firstName + ' ' + req.body.decoded.lastName,
-            authorEmail: req.body.decoded.email,
-            authorId: req.body.decoded._id,
-            date: new Date()
-        
-        });
-        console.log("insertResponse: ", insertResponse);
-    
-        res.send({message:'post created'});
+      return;
     }
-    catch (error) {
-      console.log(error);
-      res.send({message:'Error occurred.'})  
-    }})
+    const insertResponse = await col.insertOne({
+      // id: nanoid(),
+      title: req.body.title,
+      text: req.body.text,
+      author: req.body.decoded.firstName + " " + req.body.decoded.lastName,
+      authorEmail: req.body.decoded.email,
+      authorId: new ObjectId(req.body.decoded._id),
+      date: new Date(),
+    });
+    console.log("insertResponse: ", insertResponse);
+
+    res.send({ message: "post created" });
+  } catch (error) {
+    console.log(error);
+    res.send({ message: "Error occurred." });
+  }
+});
 
 // Feed
-router.get('/feed', async (req, res, next) => {
-    //TODO
-    res.send();
-})
+router.get("/feed", async (req, res, next) => {
+  const cursor = col
+    .find({})
+    .sort({ _id: -1 })
+    .limit(100);
+  try {
+    let results = await cursor.toArray();
+    console.log("results: ", results);
+    res.send(results);
+  } catch (e) {
+    console.log("error getting data mongodb ", e);
+    res.status(500).send("server error, please try later");
+  }
+});
 
 // Get Profile
 const getProfileMiddleware = async (req, res, next) => {
-    // console.log('this is signup!', new Date());
+  // console.log('this is signup!', new Date());
 
-    const userId = req.params.userId || req.body.decoded._id;
+  const userId = req.params.userId || req.body.decoded._id;
 
-    if(!ObjectId.isValid(userId)){
-        res.status(403).send({message: `profile id must be a valid id`})
-        return
-    }
+  if (!ObjectId.isValid(userId)) {
+    res.status(403).send({ message: `profile id must be a valid id` });
+    return;
+  }
 
-    try {
-        let result = await userCollection.findOne({ _id: userId });
-        console.log("result: ", result);
-        res.send({
-            message: 'profile fetched',
-            data: {
-                isAdmin: result.isAdmin,
-                firstName: result.firstName,
-                lastName: result.lastName,
-                email: result.email,
-            }
-        })
-    }
-    catch (error) {
-      console.log(error);
-      res.send({message:'Server error occurred.'})  
-    }}
-router.get('/profile', getProfileMiddleware)
-router.get('/profile/:userId', getProfileMiddleware)
+  try {
+    let result = await userCollection.findOne({ _id: new ObjectId(userId) });
+    console.log("result: ", result);
+    res.send({
+      message: "profile fetched",
+      data: {
+        isAdmin: result?.isAdmin,
+        firstName: result?.firstName,
+        lastName: result?.lastName,
+        email: result?.email,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({ message: "Server error occurred." });
+  }
+};
+router.get("/profile", getProfileMiddleware);
+router.get("/profile/:userId", getProfileMiddleware);
 
 // GET All Posts     /api/v1/posts
-router.get('/posts', async (req, res, next) => {
+router.get("/posts", async (req, res, next) => {
+  const userId = req.query._id || req.body.decoded._id;
 
-    const userId = req.query._id || req.body.decoded._id;
+  if (!ObjectId.isValid(userId)) {
+    res.status(403).send({ message: `Invalid user id` });
+    return;
+  }
 
-    if(!ObjectId.isValid(userId)){
-        res.status(403).send({message: `Invalid user id`})
-        return
-    }
-
-    const cursor = col.find({_id: userId}).sort({_id:-1}).limit(100);
-    try{
-        let results = await cursor.toArray()
-        console.log("results: ", results);
-        res.send(results);
-    }catch(e){
-        console.log('error getting data mongodb ', e)
-        res.status(500).send('server error, please try later')
-    }
-})
+  const cursor = col
+    .find({ authorId: new ObjectId(userId) })
+    .sort({ _id: -1 })
+    .limit(100);
+  try {
+    let results = await cursor.toArray();
+    console.log("results: ", results);
+    res.send(results);
+  } catch (e) {
+    console.log("error getting data mongodb ", e);
+    res.status(500).send("server error, please try later");
+  }
+});
 
 // GET Single Post
 // router.get('/post/:postId', (req, res, next) => {
@@ -229,81 +235,73 @@ router.get('/posts', async (req, res, next) => {
 //     text: "updated text"
 // }
 
-
 // PUT Single Post
-router.put('/post/:postId', async (req, res, next) => {
+router.put("/post/:postId", async (req, res, next) => {
+  if (!ObjectId.isValid(req.params.postId)) {
+    res.status(403).send({ message: `post id must be a valid id` });
+    return;
+  }
 
-    if(!ObjectId.isValid(req.params.postId)){
-        res.status(403).send({message: `post id must be a valid id`})
-        return
-    }
-
-    if (!req.body.text || !req.body.title) {
-        res.status(403).send(`example put body: 
+  if (!req.body.text || !req.body.title) {
+    res.status(403).send(`example put body: 
         PUT     /api/v1/post/:postId
         {
             title: "updated title",
             text: "updated text"
         }
         `);
-        return;
-    }
+    return;
+  }
 
-    // const cursor = col.find[{_id: new ObjectId(req.params.postId._id)}]
+  // const cursor = col.find[{_id: new ObjectId(req.params.postId._id)}]
 
-    try {
-        await col.updateOne(
-            { _id: new ObjectId(req.params.postId) },
-            {
-              $set: { title: req.body.title , text: req.body.text },
-            //   $currentDate: { lastModified: true }
-            }
-          );
-          res.send({message: 'Data has been updated.'});
-        
-    } catch (error) {
-        console.log(error);
-        res.send("Error occurred")
-        
-    }
+  try {
+    await col.updateOne(
+      { _id: new ObjectId(req.params.postId) },
+      {
+        $set: { title: req.body.title, text: req.body.text },
+        //   $currentDate: { lastModified: true }
+      }
+    );
+    res.send({ message: "Data has been updated." });
+  } catch (error) {
+    console.log(error);
+    res.send("Error occurred");
+  }
 
-
-    // for (let i = 0; i < col.length; i++) {
-    //     if (col[i].id === req.params.postId) {
-    //         col[i] = {
-    //             text: req.body.text,
-    //             title: req.body.title,
-    //         }
-    //         res.send('post updated with id ' + req.params.postId);
-    //         return;
-    //     }
-    // }
-    // res.send('post not found with id ' + req.params.postId);
+  // for (let i = 0; i < col.length; i++) {
+  //     if (col[i].id === req.params.postId) {
+  //         col[i] = {
+  //             text: req.body.text,
+  //             title: req.body.title,
+  //         }
+  //         res.send('post updated with id ' + req.params.postId);
+  //         return;
+  //     }
+  // }
+  // res.send('post not found with id ' + req.params.postId);
 });
 
 // DELETE  /api/v1/post/:userId/:postId
-router.delete('/post/:postId', async (req, res, next) => {
-
-    if (!req.params.postId) {
-        res.status(403).send({message: `post id must be a valid id`})
-    }
-    try{
+router.delete("/post/:postId", async (req, res, next) => {
+  if (!req.params.postId) {
+    res.status(403).send({ message: `post id must be a valid id` });
+  }
+  try {
     await col.deleteOne({ _id: new ObjectId(req.params.postId) });
-    res.send({message: 'Data has been deleted.'})
-    }catch (err){
+    res.send({ message: "Data has been deleted." });
+  } catch (err) {
+    res.status(404).send({ message: "Error deleting." });
+  }
 
-    res.status(404).send({message: 'Error deleting.'})
-    
-    }
+  // for (let i = 0; i < posts.length; i++) {
+  //     if (posts[i].id === req.params.postId) {
+  //         posts.splice(i, 1)
+  //         res.send('post deleted with id ' + req.params.postId);
+  //         return;
+  //     }
+  // }
+  // res.send('post not found with id ' + req.params.postId);
+});
 
-    // for (let i = 0; i < posts.length; i++) {
-    //     if (posts[i].id === req.params.postId) {
-    //         posts.splice(i, 1)
-    //         res.send('post deleted with id ' + req.params.postId);
-    //         return;
-    //     }
-    // }
-    // res.send('post not found with id ' + req.params.postId);
-})
-
-export default router
+export default router;

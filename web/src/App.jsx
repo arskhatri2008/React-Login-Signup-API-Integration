@@ -19,6 +19,21 @@ const App = () => {
   // const [isLogin , setIsLogin] = useState(false)
 
   useEffect(() => {
+    // Add a request interceptor
+    axios.interceptors.request.use(
+      function (config) {
+        // Do something before request is sent
+        config.withCredentials = true;
+        return config;
+      },
+      function (error) {
+        // Do something with request error
+        return Promise.reject(error);
+      }
+    );
+  }, []);
+
+  useEffect(() => {
     const checkLoginStatus = async () => {
       try {
         const response = await axios.get(`${baseUrl}/api/v1/mongoDB/profile`, {
@@ -42,83 +57,103 @@ const App = () => {
 
   const logoutHandler = async () => {
     try {
-      await axios.post(`${baseUrl}/api/v1/mongoDB/logout`,{}, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `${baseUrl}/api/v1/mongoDB/logout`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       dispatch({
         type: "USER_LOGOUT",
       });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div>
       {/* admin routes */}
-      {state.isLogin === true && state.role === 'admin' ? (
+      {state.isLogin === true && state.role === "admin" ? (
         <>
-        <nav>
-          <ul>
-            <li><Link to={"/"}>Admin Home</Link></li>
-            <li><Link to={"/chat"}>Admin Chat</Link></li>
-            <li><Link to={"/about"}>Admin About</Link></li>
-            {state.user.email}
-            <button onClick={logoutHandler}>Logout</button>
-            {/* <li><Link to={'/login'}>Login</Link></li>
+          <nav>
+            <ul>
+              <li>
+                <Link to={"/"}>Admin Home</Link>
+              </li>
+              <li>
+                <Link to={"/chat"}>Admin Chat</Link>
+              </li>
+              <li>
+                <Link to={"/about"}>Admin About</Link>
+              </li>
+              {state.user.email}
+              <button onClick={logoutHandler}>Logout</button>
+              {/* <li><Link to={'/login'}>Login</Link></li>
                 <li><Link to={'/signup'}>Sign Up</Link></li> */}
-          </ul>
-        </nav>
+            </ul>
+          </nav>
 
-        <Routes>
+          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="chat" element={<Chat />} />
             {/* <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} /> */}
             <Route path="*" element={<Navigate to="/" replace={true} />} />
-        </Routes>
-      </>
+          </Routes>
+        </>
       ) : null}
 
       {/* user routes */}
-      {state.isLogin === true && state.role === 'user' ? (
+      {state.isLogin === true && state.role === "user" ? (
         <>
-        <nav>
-          <ul>
-            <li><Link to={"/"}>Home</Link></li>
-            <li><Link to={"/chat"}>Chat</Link></li>
-            <li><Link to={"/about"}>About</Link></li>
-            {state.user.email}
-            <button onClick={logoutHandler}>Logout</button>
-            {/* <li><Link to={'/login'}>Login</Link></li>
+          <nav>
+            <ul>
+              <li>
+                <Link to={"/"}>Home</Link>
+              </li>
+              <li>
+                <Link to={"/chat"}>Chat</Link>
+              </li>
+              <li>
+                <Link to={"/about"}>About</Link>
+              </li>
+              {state.user.email}
+              <button onClick={logoutHandler}>Logout</button>
+              {/* <li><Link to={'/login'}>Login</Link></li>
                 <li><Link to={'/signup'}>Sign Up</Link></li> */}
-          </ul>
-        </nav>
+            </ul>
+          </nav>
 
-        <Routes>
+          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="chat" element={<Chat />} />
             {/* <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} /> */}
             <Route path="*" element={<Navigate to="/" replace={true} />} />
-        </Routes>
-      </>
+          </Routes>
+        </>
       ) : null}
 
       {/* unAuth routes */}
       {state.isLogin === false ? (
         <>
-        <nav>
-          <ul>
-            {/* <li><Link to={'/'}>Home</Link></li>
+          <nav>
+            <ul>
+              {/* <li><Link to={'/'}>Home</Link></li>
             <li><Link to={'/chat'}>Chat</Link></li>
             <li><Link to={'/about'}>About</Link></li> */}
-            <li><Link to={"/login"}>Login</Link></li>
-            <li><Link to={"/signup"}>Sign Up</Link></li>
-          </ul>
-        </nav>
+              <li>
+                <Link to={"/login"}>Login</Link>
+              </li>
+              <li>
+                <Link to={"/signup"}>Sign Up</Link>
+              </li>
+            </ul>
+          </nav>
 
           <Routes>
             {/* <Route path='/' element={<Home />} />
