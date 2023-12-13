@@ -6,6 +6,7 @@ import About from "./pages/about/about";
 import Chat from "./pages/chat/chat";
 import Login from "./pages/login/login";
 import Signup from "./pages/signup/signup";
+import ProfilePage from "./pages/profile/profile";
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { GlobalContext } from "./context/context";
@@ -115,6 +116,9 @@ const App = () => {
                 <Link to={"/"}>Home</Link>
               </li>
               <li>
+                <Link to={"/profile"}>Profile</Link>
+              </li>
+              <li>
                 <Link to={"/chat"}>Chat</Link>
               </li>
               <li>
@@ -131,6 +135,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="chat" element={<Chat />} />
+            <Route path="profile" element={<ProfilePage />} />
             {/* <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} /> */}
             <Route path="*" element={<Navigate to="/" replace={true} />} />

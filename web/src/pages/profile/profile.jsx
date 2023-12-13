@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import "./home.css";
+import { useEffect, useRef, useState, useContext } from "react";
+import "./profile.css";
 import { baseUrl } from "../../core";
+import { GlobalContext } from "../../context/context";
 // import WeatherCard from "../weatherWidget/weatherWidget";
 // const baseUrl = "http://localhost:5001";
 
-const Home = () => {
+const Profile = () => {
+  const { state, dispatch } = useContext(GlobalContext);
+
   const [alert, setAlert] = useState([]);
   const [editAlert, setEditAlert] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +23,7 @@ const Home = () => {
       try {
         setIsLoading(true)
           // let apiKey = "1eb2b0718446fe54a6718bc2ed5f4a03"
-          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/feed`,{withCredentials: true});
+          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/post`,{withCredentials: true});
 
         console.log(response.data);
         // setWeatherData([response.data, ...weatherData]);
@@ -140,6 +143,15 @@ const Home = () => {
 
   return (
     <div>
+      <div className="banner">
+        <img className="bannerImg" src="" alt="" />
+        <img className="profileImg" src="" alt="" />
+        <div className="profileName">
+          <h1>
+            {state.user.firstName} {state.user.lastName}
+          </h1>
+        </div>
+      </div>
       <form onSubmit={submitHandler}>
         <label htmlFor="postTitleInput">Post Title: </label>
         <input
@@ -227,4 +239,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Profile;
