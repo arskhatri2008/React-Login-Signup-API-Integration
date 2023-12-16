@@ -3,6 +3,8 @@ import { useEffect, useRef, useState, useContext } from "react";
 import "./profile.css";
 import { baseUrl } from "../../core";
 import { GlobalContext } from "../../context/context";
+import { useParams } from 'react-router-dom';
+
 // import WeatherCard from "../weatherWidget/weatherWidget";
 // const baseUrl = "http://localhost:5001";
 
@@ -17,13 +19,16 @@ const Profile = () => {
   const searchInputRef   = useRef(null);
   const [allPosts, setAllPosts] = useState([])
   const [toggleRefresh, setToggleRefresh] = useState(false)
+  const {userId} = useParams();
+  const [profile, setProfile] = useState(null)
 
   const getAllPosts = async () => {
 
       try {
         setIsLoading(true)
           // let apiKey = "1eb2b0718446fe54a6718bc2ed5f4a03"
-          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/post`,{withCredentials: true});
+          const response = await axios.get(`${baseUrl}/api/v1/mongoDB/posts?_id=${userId || ""}`,
+          {withCredentials: true});
 
         console.log(response.data);
         // setWeatherData([response.data, ...weatherData]);
@@ -35,6 +40,21 @@ const Profile = () => {
       }
     }
 
+  const getProfile = async () => {
+    try {
+      setIsLoading(true)
+      const response = await axios.get(`${baseUrl}/api/v1/mongoDB/profile/${userId || ""}`,
+      {withCredentials: true});
+
+      console.log(response.data);
+      setIsLoading(false)
+      setProfile(response.data)
+    } catch (error) {
+      console.log(error.data);
+      setIsLoading(false)
+    }
+  }
+
     useEffect(() => {
     // setIsLoading(true)
     // const controller = new AbortController();
@@ -42,6 +62,7 @@ const Profile = () => {
     //   navigator.geolocation.getCurrentPosition(async(location) => {
     //     console.log("location", location)
     getAllPosts()
+    getProfile()
 
     return () => {
       //cleanup function
@@ -148,7 +169,7 @@ const Profile = () => {
         <img className="profileImg" src="" alt="" />
         <div className="profileName">
           <h1>
-            {state.user.firstName} {state.user.lastName}
+            {profile?.data?.firstName} {profile?.data?.lastName}
           </h1>
         </div>
       </div>

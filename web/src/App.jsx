@@ -136,6 +136,7 @@ const App = () => {
             <Route path="about" element={<About />} />
             <Route path="chat" element={<Chat />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="profile/:userId" element={<ProfilePage />} />
             {/* <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} /> */}
             <Route path="*" element={<Navigate to="/" replace={true} />} />
