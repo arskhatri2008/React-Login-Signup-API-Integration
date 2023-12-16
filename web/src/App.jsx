@@ -116,7 +116,7 @@ const App = () => {
                 <Link to={"/"}>Home</Link>
               </li>
               <li>
-                <Link to={"/profile"}>Profile</Link>
+                <Link to={`/profile/${state.user._id}`}>Profile</Link>
               </li>
               <li>
                 <Link to={"/chat"}>Chat</Link>
@@ -135,7 +135,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="chat" element={<Chat />} />
-            <Route path="profile" element={<ProfilePage />} />
+            {/* <Route path="profile" element={<ProfilePage />} /> */}
             <Route path="profile/:userId" element={<ProfilePage />} />
             {/* <Route path='login' element={<Login />} />
             <Route path='signup' element={<Signup />} /> */}
@@ -168,6 +168,7 @@ const App = () => {
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
             <Route path="*" element={<Navigate to="/login" replace={true} />} />
+            <Route path="profile/:userId" element={<ProfilePage />} />
           </Routes>
         </>
       ) : null}

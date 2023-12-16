@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { all } from "axios";
 import { useEffect, useRef, useState, useContext } from "react";
 import "./profile.css";
 import { baseUrl } from "../../core";
@@ -173,7 +173,7 @@ const Profile = () => {
           </h1>
         </div>
       </div>
-      <form onSubmit={submitHandler}>
+      {state.user._id === userId && (<form onSubmit={submitHandler}>
         <label htmlFor="postTitleInput">Post Title: </label>
         <input
           type="text"
@@ -209,7 +209,7 @@ const Profile = () => {
           {isLoading && "Loading..."}
       </span>
       <br />
-      </form>
+      </form>)}
       <br />
 
       <form onSubmit={searchHandler} style={{ textAlign: "right" }}>
@@ -255,6 +255,8 @@ const Profile = () => {
            </div>)
            
         })}
+
+        {allPosts.length === 0 && "No Posts Yet"}
       </div>
     </div>
   );
